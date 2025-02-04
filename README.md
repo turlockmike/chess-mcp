@@ -1,5 +1,5 @@
 # Chess Analysis Assistant for Claude
-
+[![smithery badge](https://smithery.ai/badge/chess-mcp)](https://smithery.ai/server/chess-mcp)
 This tool helps you analyze chess positions and get professional evaluations using Stockfish, right within Claude! You can:
 - Get position evaluations
 - See visual board representations
@@ -12,6 +12,14 @@ This tool helps you analyze chess positions and get professional evaluations usi
 - Git installed on your system
 
 ## Quick Installation
+
+### Installing via Smithery
+
+To install Chess Analysis Assistant for Claude Desktop automatically via [Smithery](https://smithery.ai/server/chess-mcp):
+
+```bash
+npx -y @smithery/cli install chess-mcp --client claude
+```
 
 ### Mac and Linux Users
 
