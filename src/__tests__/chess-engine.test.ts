@@ -6,7 +6,7 @@ describe('ChessEngine', () => {
   let engine: ChessEngine;
 
   beforeAll(async () => {
-    engine = new ChessEngine('/opt/homebrew/bin/stockfish');
+    engine = new ChessEngine();
     await engine.init();
   }, 30000);
 

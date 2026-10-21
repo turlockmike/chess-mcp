@@ -87,6 +87,30 @@ npm install -g chess-mcp
 
 4. Save and restart Claude Desktop
 
+### Stockfish location
+
+The server looks for Stockfish in this order:
+
+1. The `STOCKFISH_PATH` environment variable, if set
+2. `stockfish` on your `PATH`
+3. Common install locations (`/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`, `/usr/games`)
+
+If Stockfish is installed somewhere else (common on Windows or Intel Macs), point to it explicitly:
+
+```json
+{
+    "mcpServers": {
+        "chess": {
+            "command": "npx",
+            "args": ["chess-mcp"],
+            "env": {
+                "STOCKFISH_PATH": "C:\\tools\\stockfish\\stockfish.exe"
+            }
+        }
+    }
+}
+```
+
 ## Using the Chess Assistant
 
 1. Open Claude Desktop
@@ -125,6 +149,6 @@ If you run into any issues:
 ## Common Issues
 
 - **"Tools not showing up in Claude"**: Make sure you've configured Claude Desktop correctly
-- **"Stockfish not found"**: Verify Stockfish is installed and accessible from the command line
+- **"Stockfish not found"** / **"Server Disconnected"**: Verify Stockfish is installed and accessible from the command line, or set `STOCKFISH_PATH` (see [Stockfish location](#stockfish-location))
 - **"Node version error"**: Make sure you have Node.js version 20 or higher installed
 - **"Canvas installation failed"**: Make sure Cairo is installed correctly for your operating system 

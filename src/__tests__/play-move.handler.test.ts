@@ -12,7 +12,7 @@ describe('PlayMoveHandler', () => {
   let mockImageService: jest.Mocked<ChessImageService>;
 
   beforeAll(async () => {
-    engine = new ChessEngine('/opt/homebrew/bin/stockfish');
+    engine = new ChessEngine();
     await engine.init();
   }, 30000);
 
