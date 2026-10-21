@@ -43,7 +43,7 @@ export class ChessServer {
       }
     );
 
-    this.engine = new ChessEngine('/opt/homebrew/bin/stockfish');
+    this.engine = new ChessEngine();
     this.imageService = new ChessImageService();
     this.handlerRegistry = new SimpleHandlerRegistry();
     this.setupServer();

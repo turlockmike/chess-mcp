@@ -1,5 +1,48 @@
 import { Chess } from "chess.js";
 import { Engine } from "node-uci";
+import { existsSync } from "fs";
+import { delimiter, join } from "path";
+
+// Common install locations, checked only when stockfish is not on PATH.
+export const DEFAULT_ENGINE_PATHS = [
+  '/opt/homebrew/bin/stockfish',
+  '/usr/local/bin/stockfish',
+  '/usr/bin/stockfish',
+  '/usr/games/stockfish',
+];
+
+/**
+ * Locate the Stockfish binary: STOCKFISH_PATH, then PATH, then known install locations.
+ */
+export function resolveEnginePath(
+  env: NodeJS.ProcessEnv = process.env,
+  fallbacks: string[] = DEFAULT_ENGINE_PATHS
+): string {
+  if (env.STOCKFISH_PATH) {
+    if (!existsSync(env.STOCKFISH_PATH)) {
+      throw new Error(`STOCKFISH_PATH is set to "${env.STOCKFISH_PATH}" but no file exists there`);
+    }
+    return env.STOCKFISH_PATH;
+  }
+
+  const names = process.platform === 'win32' ? ['stockfish.exe', 'stockfish'] : ['stockfish'];
+  for (const dir of (env.PATH || '').split(delimiter)) {
+    if (!dir) continue;
+    for (const name of names) {
+      const candidate = join(dir, name);
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+
+  for (const candidate of fallbacks) {
+    if (existsSync(candidate)) return candidate;
+  }
+
+  throw new Error(
+    'Stockfish not found. Install it (e.g. "brew install stockfish" or "apt install stockfish") ' +
+    'or set STOCKFISH_PATH to the engine binary.'
+  );
+}
 
 interface EngineScore {
   unit: 'cp' | 'mate';
@@ -60,13 +103,16 @@ export interface MoveResult {
 export class ChessEngine {
   private engine: Engine | null = null;
   private engineReady: boolean = false;
-  private enginePath: string;
+  private enginePath?: string;
 
-  constructor(enginePath: string = '/opt/homebrew/bin/stockfish') {
+  constructor(enginePath?: string) {
     this.enginePath = enginePath;
   }
 
   async init(): Promise<void> {
+    // Resolved here rather than in the constructor so a missing engine surfaces
+    // as a clear startup error instead of a crash while constructing the server.
+    this.enginePath = this.enginePath ?? resolveEnginePath();
     this.engine = new Engine(this.enginePath);
     await this.engine.init();
     await this.engine.isready();
